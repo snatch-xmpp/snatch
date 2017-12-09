@@ -9,14 +9,15 @@ __Authors:__ "Thiago Camargo" ([`barata7@gmail.com`](mailto:barata7@gmail.com)).
 [![Build Status](https://img.shields.io/travis/snatch-xmpp/snatch/master.svg)](https://travis-ci.org/snatch-xmpp/snatch)
 [![Codecov](https://img.shields.io/codecov/c/github/snatch-xmpp/snatch.svg)](https://codecov.io/gh/snatch-xmpp/snatch)
 [![License: Apache 2.0](https://img.shields.io/github/license/snatch-xmpp/snatch.svg)](https://raw.githubusercontent.com/snatch-xmpp/snatch/master/LICENSE)
+[![Hex](https://img.shields.io/hexpm/v/snatch.svg)](https://hex.pm/packages/snatch)
 
 Lightweight XMPP Client Library for Erlang. This library is intended to handle client connections in an agnostic way. The system is launched using the snatch process and configuring as many claws as you need.
 
 The built-in claws are:
 
-- [XMPP Client](http://github.com/manuel-rubio/snatch/blob/master/doc/how-to/claws_xmpp.md)
-- [XMPP Component](http://github.com/manuel-rubio/snatch/blob/master/doc/how-to/claws_xmpp_comp.md)
-- [XMPP over HTTP Long-polling](http://github.com/manuel-rubio/snatch/blob/master/doc/how-to/claws_lp.md)
+- [XMPP Client](http://github.com/snatch-xmpp/snatch/blob/master/doc/how-to/claws_xmpp.md)
+- [XMPP Component](http://github.com/snatch-xmpp/snatch/blob/master/doc/how-to/claws_xmpp_comp.md)
+- [XMPP over HTTP Long-polling](http://github.com/snatch-xmpp/snatch/blob/master/doc/how-to/claws_lp.md)
 - [XMPP over AMQP](https://github.com/snatch-xmpp/claws_rabbitmq)
 - [XMPP over Kafka](https://github.com/snatch-xmpp/claws_kafka)
 
@@ -148,7 +149,7 @@ There are a framework to test XMPP easily. For further information: [testing fra
 Troubleshooting
 ---------------
 
-Feel free to create an issue in github to point a bug, flaw or improvement and even send a pull request with a specific change. Read the [LICENSE](http://github.com/manuel-rubio/snatch/blob/master/doc/LICENSE) if you have doubts about what you can do with the code.
+Feel free to create an issue in github to point a bug, flaw or improvement and even send a pull request with a specific change. Read the [LICENSE](http://github.com/snatch-xmpp/snatch/blob/master/doc/LICENSE) if you have doubts about what you can do with the code.
 
 Enjoy!
 
@@ -157,12 +158,12 @@ Enjoy!
 
 
 <table width="100%" border="0" summary="list of modules">
-<tr><td><a href="http://github.com/manuel-rubio/snatch/blob/master/doc/claws.md" class="module">claws</a></td></tr>
-<tr><td><a href="http://github.com/manuel-rubio/snatch/blob/master/doc/claws_lp.md" class="module">claws_lp</a></td></tr>
-<tr><td><a href="http://github.com/manuel-rubio/snatch/blob/master/doc/claws_xmpp.md" class="module">claws_xmpp</a></td></tr>
-<tr><td><a href="http://github.com/manuel-rubio/snatch/blob/master/doc/claws_xmpp_comp.md" class="module">claws_xmpp_comp</a></td></tr>
-<tr><td><a href="http://github.com/manuel-rubio/snatch/blob/master/doc/snatch.md" class="module">snatch</a></td></tr>
-<tr><td><a href="http://github.com/manuel-rubio/snatch/blob/master/doc/snatch_jid.md" class="module">snatch_jid</a></td></tr>
-<tr><td><a href="http://github.com/manuel-rubio/snatch/blob/master/doc/snatch_router.md" class="module">snatch_router</a></td></tr>
-<tr><td><a href="http://github.com/manuel-rubio/snatch/blob/master/doc/snatch_xml.md" class="module">snatch_xml</a></td></tr></table>
+<tr><td><a href="http://github.com/snatch-xmpp/snatch/blob/master/doc/claws.md" class="module">claws</a></td></tr>
+<tr><td><a href="http://github.com/snatch-xmpp/snatch/blob/master/doc/claws_lp.md" class="module">claws_lp</a></td></tr>
+<tr><td><a href="http://github.com/snatch-xmpp/snatch/blob/master/doc/claws_xmpp.md" class="module">claws_xmpp</a></td></tr>
+<tr><td><a href="http://github.com/snatch-xmpp/snatch/blob/master/doc/claws_xmpp_comp.md" class="module">claws_xmpp_comp</a></td></tr>
+<tr><td><a href="http://github.com/snatch-xmpp/snatch/blob/master/doc/snatch.md" class="module">snatch</a></td></tr>
+<tr><td><a href="http://github.com/snatch-xmpp/snatch/blob/master/doc/snatch_jid.md" class="module">snatch_jid</a></td></tr>
+<tr><td><a href="http://github.com/snatch-xmpp/snatch/blob/master/doc/snatch_router.md" class="module">snatch_router</a></td></tr>
+<tr><td><a href="http://github.com/snatch-xmpp/snatch/blob/master/doc/snatch_xml.md" class="module">snatch_xml</a></td></tr></table>
 
