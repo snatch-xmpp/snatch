@@ -1,0 +1,5 @@
+{description, "Snatch template for router."}.
+{variables, [
+    {name, "xxx", "Name of the module to create."},
+]}.
+{template, "snatch.erl", "src/{{name}}.erl"}.

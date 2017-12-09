@@ -1,0 +1,14 @@
+.eunit
+deps
+*.o
+*.beam
+*.plt
+erl_crash.dump
+ebin
+log
+rel/example_project
+.concrete/DEV_MODE
+.rebar
+_build
+cobertura.xml
+rebar3.crashdump

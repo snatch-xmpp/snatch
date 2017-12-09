@@ -1,0 +1,4 @@
+%% encoding: UTF-8
+{application,snatch}.
+{modules,[claws,claws_lp,claws_xmpp,claws_xmpp_comp,snatch,snatch_jid,
+          snatch_router,snatch_xml]}.

@@ -1,0 +1,5 @@
+{description, "Claw template."}.
+{variables, [
+    {name, "xxx", "Name of the module to create."},
+]}.
+{template, "claw.erl", "src/{{name}}.erl"}.

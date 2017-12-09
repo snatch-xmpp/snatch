@@ -1,0 +1,19 @@
+{application, snatch, [
+    {description, "An Erlang Lightweight XMPP Client library"},
+    {vsn, git},
+    {registered, []},
+    {applications, [kernel,
+                    stdlib,
+                    inets,
+                    fast_xml,
+                    fast_xml,
+                    amqp_client,
+                    rabbit_common,
+                    p1_utils,
+                    brod,
+                    ibrowse]},
+    {env, []},
+    {maintainers, ["Thiago Camargo", "Manuel Rubio"]},
+    {licenses, ["Apache License 2.1"]},
+    {links, [{"Github", "https://github.com/manuel-rubio/snatch"}]}
+]}.
