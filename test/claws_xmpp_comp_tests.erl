@@ -29,9 +29,9 @@ recv() ->
     end.
 
 connect() ->
-    connect(false, false).
+    connect(false, false, false).
 
-connect(Trimmed, AdjustAttrs) ->
+connect(Trimmed, AdjustAttrs, Ping) ->
     {ok, Apps} = application:ensure_all_started(fast_xml),
     {ok, LSocket, Port} = listen(),
     Params = #{host => {127,0,0,1},
@@ -39,7 +39,8 @@ connect(Trimmed, AdjustAttrs) ->
                domain => <<"news.example.com">>,
                password => <<"secret">>,
                trimmed => Trimmed,
-               adjust_attrs => AdjustAttrs},
+               adjust_attrs => AdjustAttrs,
+               ping => Ping},
     {ok, _PID} = claws_xmpp_comp:start_link(Params),
     ok = claws_xmpp_comp:connect(),
     {ok, Socket} = accept(LSocket),
@@ -59,10 +60,13 @@ clean() ->
     end.
 
 get_all(Data) ->
+    get_all(Data, 250).
+
+get_all(Data, Time) ->
     receive
-        Packet -> get_all([Packet|Data])
+        Packet -> get_all([Packet|Data], Time)
     after
-        250 -> Data
+        Time -> Data
     end.
 
 disconnect(Apps, LSocket, Socket) ->
@@ -109,7 +113,7 @@ send_message_test() ->
     ok.
 
 send_adjusted_attributes_message_test() ->
-    {ok, Apps, LSocket, Socket} = connect(false, true),
+    {ok, Apps, LSocket, Socket} = connect(false, true, false),
     ok = claws_xmpp_comp:send(<<"<message type='chat'><body>Hi</body></message>">>,
                               <<"user@example.com">>,
                               <<"msg1">>),
@@ -119,6 +123,15 @@ send_adjusted_attributes_message_test() ->
                                       "type='chat'>", _/binary>>}],
                  get_all([])),
     ok = disconnect(Apps, LSocket, Socket),
+    ok.
+
+received_ping_test() ->
+    {ok, Apps, LSocket, Socket} = connect(false, true, 100),
+    true = register(snatch, self()),
+    timer:sleep(250),
+    ?assertMatch([{tcp, _, <<"\n">>}|_], get_all([], 0)),
+    ok = disconnect(Apps, LSocket, Socket),
+    true = unregister(snatch),
     ok.
 
 received_error_message_test() ->
@@ -152,7 +165,7 @@ received_message_test() ->
     ok.
 
 received_message_trimmed_test() ->
-    {ok, Apps, LSocket, Socket} = connect(true, false),
+    {ok, Apps, LSocket, Socket} = connect(true, false, false),
     true = register(snatch, self()),
     ok = gen_tcp:send(Socket, <<"<message type='chat' to='news.example.com'>
                                      <body>Hi</body>
