@@ -18,7 +18,7 @@ __Behaviours:__ [`claws`](claws.md), [`gen_statem`](gen_statem.md).
 
 
 <pre><code>
-state_data() = #data{domain = binary(), password = binary(), host = <a href="inet.md#type-socket_address">inet:socket_address()</a>, port = <a href="inet.md#type-port_number">inet:port_number()</a>, socket = <a href="gen_tcp.md#type-socket">gen_tcp:socket()</a>, trimmed = boolean(), adjust_attrs = boolean(), stream = any()}
+state_data() = #data{domain = binary(), password = binary(), host = <a href="inet.md#type-socket_address">inet:socket_address()</a>, port = <a href="inet.md#type-port_number">inet:port_number()</a>, socket = <a href="gen_tcp.md#type-socket">gen_tcp:socket()</a>, trimmed = boolean(), adjust_attrs = boolean(), ping = false | pos_integer(), stream = any()}
 </code></pre>
 
 

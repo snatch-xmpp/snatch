@@ -26,13 +26,13 @@ The system requires OTP 19+ because we use <a href="http://erlang.org/doc/design
 In the same way we prefer to use <a href="http://www.rebar3.org">rebar3</a> instead of older versions. To install snatch only needs:
 
 <pre lang="erlang">{deps, [
-    {snatch, {git, "https://github.com/manuel-rubio/snatch.git", {branch, master}}}
+    {snatch, "0.2.1"}
 ]}</pre>
 
 Or if you are using [erlang.mk](https://erlang.mk) instead, you can use:
 
 <pre lang="Makefile">DEPS += snatch
-dep_snatch = git https://github.com/snatch-xmpp/snatch.git master</pre>
+dep_snatch = hex 0.2.1</pre>
 
 You'll need a C/C++ compiler installed in your system for [fast_xml](https://github.com/processone/fast_xml) and [stringprep](https://github.com/processone/stringprep).
 

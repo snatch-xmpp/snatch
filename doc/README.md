@@ -30,7 +30,7 @@ In the same way we prefer to use [rebar3](http://www.rebar3.org) instead of olde
 
 ```erlang
 {deps, [
-    {snatch, {git, "https://github.com/manuel-rubio/snatch.git", {branch, master}}}
+    {snatch, "0.2.1"}
 ]}
 ```
 
@@ -38,7 +38,7 @@ Or if you are using [erlang.mk](https://erlang.mk) instead, you can use:
 
 ```Makefile
 DEPS += snatch
-dep_snatch = git https://github.com/snatch-xmpp/snatch.git master
+dep_snatch = hex 0.2.1
 ```
 
 You'll need a C/C++ compiler installed in your system for [fast_xml](https://github.com/processone/fast_xml) and [stringprep](https://github.com/processone/stringprep).
