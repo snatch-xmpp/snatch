@@ -164,10 +164,14 @@ handle_event(info, {tcp, _Socket, Packet}, _State,
              #data{stream = Stream} = Data) ->
     NewStream = fxml_stream:parse(Stream, Packet),
     {keep_state, Data#data{stream = NewStream}, []};
-handle_event(info, {TCP, _Socket}, _State, #data{stream = Stream} = Data)
-        when TCP =:= tcp_closed orelse TCP =:= tcp_error ->
+handle_event(info, {tcp_closed, _Socket}, _State, #data{stream = Stream} = Data) ->
     snatch:disconnected(?MODULE),
     close_stream(Stream),
+    {next_state, retrying, Data, [{next_event, cast, connect}]};
+handle_event(info, {tcp_error, _Socket, Reason}, _State, #data{stream = Stream} = Data) ->
+    snatch:disconnected(?MODULE),
+    close_stream(Stream),
+    error_logger:error_msg("tcp closed error: ~p~n", [Reason]),
     {next_state, retrying, Data, [{next_event, cast, connect}]};
 handle_event(info, {'$gen_event', {xmlstreamstart, _Name, _Attribs}}, _State, _Data) ->
     {keep_state_and_data, []};
