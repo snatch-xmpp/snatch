@@ -26,11 +26,30 @@ to_bare(JID) ->
 %% @doc parse a binary to a {node, server, resource} tuple.
 parse(JID) ->
     Opts = [{capture, all, binary}],
-    case re:run(JID, "^([^@]+)@([^/]+)(/(.*))?$", Opts) of
-        {match, [_, Node, Server]} ->
+    case re:run(JID, "^(([^@]+)@)?([^/]+)(/(.*))?$", Opts) of
+        {match, [_, <<>>, <<>>, Server]} ->
+            {<<>>, Server, <<>>};
+        {match, [_, _, Node, Server]} ->
             {Node, Server, <<>>};
-        {match, [_, Node, Server, _, Res]} ->
+        {match, [_, <<>>, <<>>, Server, _, Res]} ->
+            {<<>>, Server, Res};
+        {match, [_, _, Node, Server, _, Res]} ->
             {Node, Server, Res};
         nomatch ->
             {error, enojid}
     end.
+
+-ifdef(TEST).
+-include_lib("eunit/include/eunit.hrl").
+
+parse_test() ->
+    ?assertEqual({<<>>, <<"snatch.com">>, <<>>},
+                 parse(<<"snatch.com">>)),
+    ?assertEqual({<<>>, <<"snatch.com">>, <<"res">>},
+                 parse(<<"snatch.com/res">>)),
+    ?assertEqual({<<"abc">>, <<"snatch.com">>, <<>>},
+                 parse(<<"abc@snatch.com">>)),
+    ?assertEqual({<<"abc">>, <<"snatch.com">>, <<"res">>},
+                 parse(<<"abc@snatch.com/res">>)),
+    ok.
+-endif.
