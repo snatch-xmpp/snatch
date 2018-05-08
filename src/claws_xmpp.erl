@@ -61,19 +61,23 @@ init(#{host := Host,
        user := User,
        domain := Domain,
        password := Password,
-       resource := Resource}) ->
+       resource := Resource} = Cfg) ->
+    Events = case maps:get(auto_connect, Cfg, false) of
+        true -> [{next_event, cast, connect}];
+        false -> []
+    end,
     {ok, disconnected, #data{host = Host,
                              port = Port,
                              user = User,
                              domain = Domain,
                              password = Password,
-                             resource = Resource}}.
+                             resource = Resource}, Events}.
 
 callback_mode() -> handle_event_function.
 
 %% API
 
-connect() -> 
+connect() ->
     gen_statem:cast(?SERVER, connect).
 
 disconnect() ->

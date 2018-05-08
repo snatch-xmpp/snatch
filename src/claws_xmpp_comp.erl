@@ -65,13 +65,17 @@ init(#{host := Host,
     Trimmed = maps:get(trimmed, Cfg, false),
     AddFrom = maps:get(adjust_attrs, Cfg, false),
     Ping = maps:get(ping, Cfg, false),
+    Events = case maps:get(auto_connect, Cfg, false) of
+        true -> [{next_event, cast, connect}];
+        false -> []
+    end,
     {ok, disconnected, #data{host = Host,
                              port = Port,
                              domain = Domain,
                              password = Password,
                              trimmed = Trimmed,
                              adjust_attrs = AddFrom,
-                             ping = Ping}}.
+                             ping = Ping}, Events}.
 
 -spec callback_mode() -> handle_event_function.
 %% @private
@@ -84,7 +88,7 @@ callback_mode() -> handle_event_function.
 %% API
 
 -spec connect() -> ok.
-connect() -> 
+connect() ->
     ok = gen_statem:cast(?SERVER, connect).
 
 -spec disconnect() -> ok.
