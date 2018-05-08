@@ -88,7 +88,7 @@ __Behaviours:__ [`claws`](claws.md), [`gen_statem`](gen_statem.md).
 
 ### init/1 ###
 
-`init(X1) -> any()`
+`init(Cfg) -> any()`
 
 <a name="retrying-3"></a>
 

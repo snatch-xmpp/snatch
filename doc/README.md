@@ -30,7 +30,7 @@ In the same way we prefer to use [rebar3](http://www.rebar3.org) instead of olde
 
 ```erlang
 {deps, [
-    {snatch, "0.2.1"}
+    {snatch, "0.4.0"}
 ]}
 ```
 
@@ -163,7 +163,9 @@ Enjoy!
 <tr><td><a href="claws_xmpp.md" class="module">claws_xmpp</a></td></tr>
 <tr><td><a href="claws_xmpp_comp.md" class="module">claws_xmpp_comp</a></td></tr>
 <tr><td><a href="snatch.md" class="module">snatch</a></td></tr>
+<tr><td><a href="snatch_app.md" class="module">snatch_app</a></td></tr>
 <tr><td><a href="snatch_jid.md" class="module">snatch_jid</a></td></tr>
 <tr><td><a href="snatch_router.md" class="module">snatch_router</a></td></tr>
+<tr><td><a href="snatch_stanza.md" class="module">snatch_stanza</a></td></tr>
 <tr><td><a href="snatch_xml.md" class="module">snatch_xml</a></td></tr></table>
 
