@@ -76,7 +76,7 @@ error_tag(Error) ->
 %% took from: https://xmpp.org/extensions/xep-0086.html
 get_error(<<"bad-request">>) -> {<<"400">>, <<"modify">>};
 get_error(<<"forbidden">>) -> {<<"403">>, <<"auth">>};
-get_error(<<"not-found">>) -> {<<"404">>, <<"cancel">>};
+get_error(<<"item-not-found">>) -> {<<"404">>, <<"cancel">>};
 get_error(<<"not-acceptable">>) -> {<<"406">>, <<"modify">>};
 get_error(<<"internal-server-error">>) -> {<<"500">>, <<"wait">>};
 get_error(<<"service-unavailable">>) -> {<<"503">>, <<"cancel">>};

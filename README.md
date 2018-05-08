@@ -30,7 +30,7 @@ In the same way we prefer to use [rebar3](http://www.rebar3.org) instead of olde
 
 ```erlang
 {deps, [
-    {snatch, "0.4.1"}
+    {snatch, "0.4.2"}
 ]}
 ```
 
