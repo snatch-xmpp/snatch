@@ -13,17 +13,17 @@ stop(_State) ->
     ok.
 
 init([]) ->
-    Claws = application:get_env(snatch, claws, []),
+    Modules = application:get_env(snatch, modules, []),
     {ok, {#{strategy => one_for_one,
             intensity => 10,
             period => 1},
-          children(Claws)}}.
+          children(Modules)}}.
 
 children(Claws) ->
-    lists:flatmap(fun({Module, ConfigKey}) ->
+    lists:map(fun({Module, ConfigKey}) ->
         ConfigVal = application:get_env(snatch, ConfigKey, []),
         #{ id => ConfigKey,
-           start => {Module, start_link, [ConfigVal]},
+           start => {Module, start_link, ConfigVal},
            restart => permanent,
            shutdown => 5000,
            type => worker,
