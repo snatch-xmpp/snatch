@@ -1,7 +1,7 @@
 -module(snatch_jid).
 -compile([warnings_as_errors]).
 
--export([is_full/1, to_bare/1]).
+-export([is_full/1, to_bare/1, parse/1]).
 
 
 -spec is_full(binary()) -> boolean().
