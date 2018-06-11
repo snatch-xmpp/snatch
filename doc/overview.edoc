@@ -1,5 +1,5 @@
 @author "Thiago Camargo" <barata7@gmail.com>
-@copyright 2017 Thiago Camargo
+@copyright 2017, 2018 Thiago Camargo and Manuel Rubio
 @title snatch
 
 @doc
@@ -10,13 +10,28 @@
 
 Lightweight XMPP Client Library for Erlang. This library is intended to handle client connections in an agnostic way. The system is launched using the snatch process and configuring as many claws as you need.
 
-The built-in claws are:
+**IMPORTANT** this library hasn't got by default a XML parser. It's needed to parse XML documents for XMPP claws. In previous versions we used <a href="https://github.com/processone/fast_xml">fast_xml</a> but now we let you to choose between different ones:
+
+- <a href="https://github.com/snatch_exomler">exomler</a> (recommended), it's the faster way and 100% pure Erlang implementation.
+- <a href="https://github.com/snatch_fxml">fast_xml</a> the old one (by ProcessOne).
+- <a href="https://github.com/snatch_exml">exml</a> other one (improved by Erlang Solutions).
+
+The built-in **claws** are:
 
 - <a href="doc/how-to/claws_xmpp.md">XMPP Client</a>
 - <a href="doc/how-to/claws_xmpp_comp.md">XMPP Component</a>
 - <a href="doc/how-to/claws_lp.md">XMPP over HTTP Long-polling</a>
+
+Other claws:
+
 - <a href="https://github.com/snatch-xmpp/claws_rabbitmq">XMPP over AMQP</a>
 - <a href="https://github.com/snatch-xmpp/claws_kafka">XMPP over Kafka</a>
+- <a href="https://github.com/snatch-xmpp/claws_fcm">FCM</a>
+- <a href="https://github.com/snatch-xmpp/claws_rest">HTTP REST consumer</a>
+
+And experimental:
+
+- <a href="https://github.com/snatch-xmpp/snatch_php">PHP over Erlang</a>
 
 Installation
 ------------
@@ -26,13 +41,13 @@ The system requires OTP 19+ because we use <a href="http://erlang.org/doc/design
 In the same way we prefer to use <a href="http://www.rebar3.org">rebar3</a> instead of older versions. To install snatch only needs:
 
 <pre lang="erlang">{deps, [
-    {snatch, "0.4.2"}
+    {snatch, "0.5.0"}
 ]}</pre>
 
 Or if you are using [erlang.mk](https://erlang.mk) instead, you can use:
 
 <pre lang="Makefile">DEPS += snatch
-dep_snatch = hex 0.2.1</pre>
+dep_snatch = hex 0.5.0</pre>
 
 You'll need a C/C++ compiler installed in your system for [fast_xml](https://github.com/processone/fast_xml) and [stringprep](https://github.com/processone/stringprep).
 

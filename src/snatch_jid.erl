@@ -6,7 +6,7 @@
 
 -spec is_full(binary()) -> boolean().
 %% @doc returns true if the JID is a full JID, false otherwise.
-is_full(JID) when is_binary(JID) -> 
+is_full(JID) when is_binary(JID) ->
     case parse(JID) of
         {_, _, <<>>} -> false;
         {_, _, _} -> true;

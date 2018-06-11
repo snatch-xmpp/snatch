@@ -1,0 +1,2 @@
+-record(xmlel, {name, attrs, children}).
+-record(xmlcdata, {content}).

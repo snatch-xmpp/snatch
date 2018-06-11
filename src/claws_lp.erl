@@ -10,8 +10,6 @@
 
 -export([read_chunk/3]).
 
--include_lib("fast_xml/include/fxml.hrl").
-
 -record(state, {
     url :: string(),
     channel :: httpc:request_id(),
@@ -68,7 +66,7 @@ handle_info({http, {_Pid, stream_end, Params}}, State) ->
 handle_info({http, {_Pid, {error, _Reason}}}, State) ->
     snatch:disconnected(?MODULE),
     gen_server:cast(?MODULE, connect),
-    {noreply, State#state{channel = undefined}};    
+    {noreply, State#state{channel = undefined}};
 
 handle_info({http, {_Pid, stream, Data}},
             #state{buffer = Buffer, size = Size, pid = Pid} = State) ->

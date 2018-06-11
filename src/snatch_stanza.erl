@@ -1,7 +1,7 @@
 -module(snatch_stanza).
 -compile([warnings_as_errors]).
 
--include_lib("fast_xml/include/fxml.hrl").
+-include("snatch_xml.hrl").
 -include("snatch.hrl").
 
 -export([iq/5,
@@ -41,7 +41,7 @@ stanza(StanzaType, From, To, ID, Type, Payload) ->
     Stanza = #xmlel{name = StanzaType,
                     attrs = Attrs,
                     children = Payload},
-    fxml:element_to_binary(Stanza).
+    snatch_xml:encode(Stanza).
 
 iq_resp(#xmlel{name = <<"iq">>, attrs = Attrs, children = Payload}) ->
     From = proplists:get_value(<<"to">>, Attrs, undefined),

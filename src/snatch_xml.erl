@@ -1,7 +1,7 @@
 -module(snatch_xml).
 -compile([warnings_as_errors]).
 
--include_lib("fast_xml/include/fxml.hrl").
+-include("snatch_xml.hrl").
 
 -export([clean_spaces/1,
          get_cdata/1,
@@ -9,7 +9,11 @@
          get_attr/3,
          get_attr_atom/2,
          get_attr_atom/3,
-         get_attr_int/3]).
+         get_attr_int/3,
+         parse/1,
+         encode/1]).
+
+-define(DEFAULT_XML_BACKEND, snatch_exomler).
 
 clean_spaces(#xmlel{children = []} = XmlEl) ->
     XmlEl;
@@ -58,3 +62,14 @@ get_attr_int(Name, #xmlel{attrs = Attrs}, Default) when is_integer(Default) ->
         false -> Default;
         {Name, Value} -> binary_to_integer(Value)
     end.
+
+backend() ->
+    application:get_env(snatch, xml_backend, ?DEFAULT_XML_BACKEND).
+
+parse(Bytes) ->
+    Module = backend(),
+    Module:parse(Bytes).
+
+encode(XML) ->
+    Module = backend(),
+    Module:encode(XML).

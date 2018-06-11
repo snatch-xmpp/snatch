@@ -2,7 +2,7 @@
 -behaviour(gen_statem).
 -behaviour(claws).
 
--include_lib("fast_xml/include/fxml.hrl").
+-include("snatch_xml.hrl").
 -include("snatch.hrl").
 
 -record(data, {
@@ -13,8 +13,7 @@
     socket :: gen_tcp:socket(),
     trimmed = false :: boolean(),
     adjust_attrs = false :: boolean(),
-    ping = false :: false | pos_integer(),
-    stream
+    ping = false :: false | pos_integer()
 }).
 
 -type state_data() :: #data{}.
@@ -115,10 +114,7 @@ retrying(cast, connect, Data) ->
 
 
 connected(cast, init_stream, #data{} = Data) ->
-    Opts = [no_gen_server],
-    Stream = fxml_stream:new(whereis(?SERVER), infinity, Opts),
-    {next_state, stream_init, Data#data{stream = Stream},
-     [{next_event, cast, init}]}.
+    {next_state, stream_init, Data, [{next_event, cast, init}]}.
 
 
 stream_init(cast, init, #data{domain = Domain, socket = Socket} = Data) ->
@@ -171,12 +167,12 @@ change_attrs(Fields, XmlEl) ->
 ready(cast, {send, Packet, JID, ID}, #data{socket = Socket,
                                            adjust_attrs = true,
                                            domain = Domain} = Data) ->
-    XmlEl = fxml_stream:parse_element(Packet),
+    XmlEl = snatch_xml:parse(Packet),
     Fields = [{<<"to">>, JID},
               {<<"from">>, Domain},
               {<<"id">>, ID}],
     NewXmlEl = change_attrs(Fields, XmlEl),
-    NewPacket = fxml:element_to_binary(NewXmlEl),
+    NewPacket = snatch_xml:encode(NewXmlEl),
     gen_tcp:send(Socket, NewPacket),
     {keep_state_and_data, timeout_action(Data)};
 
@@ -203,33 +199,16 @@ ready(cast, {received, Packet}, #data{trimmed = false} = Data) ->
 handle_event(timeout, ping, _State, #data{socket = Socket} = Data) ->
     gen_tcp:send(Socket, <<"\n">>),
     {keep_state_and_data, timeout_action(Data)};
-handle_event(info, {tcp, _Socket, Packet}, _State,
-             #data{stream = Stream} = Data) ->
-    NewStream = fxml_stream:parse(Stream, Packet),
-    {keep_state, Data#data{stream = NewStream}, []};
-handle_event(info, {tcp_closed, _Socket}, _State, #data{stream = Stream} = Data) ->
+handle_event(info, {tcp, _Socket, Packet}, _State, _Data) ->
+    Parsed = snatch_xml:parse(Packet),
+    {keep_state_and_data, [{next_event, cast, {received, Parsed}}]};
+handle_event(info, {tcp_closed, _Socket}, _State, Data) ->
     snatch:disconnected(?MODULE),
-    close_stream(Stream),
     {next_state, retrying, Data, [{next_event, cast, connect}]};
-handle_event(info, {tcp_error, _Socket, Reason}, _State, #data{stream = Stream} = Data) ->
+handle_event(info, {tcp_error, _Socket, Reason}, _State, Data) ->
     snatch:disconnected(?MODULE),
-    close_stream(Stream),
     error_logger:error_msg("tcp closed error: ~p~n", [Reason]),
     {next_state, retrying, Data, [{next_event, cast, connect}]};
-handle_event(info, {xmlstreamstart, _Name, _Attribs} = Packet, _State, Data) ->
-    {keep_state, Data, [{next_event, cast, {received, Packet}}]};
-handle_event(info, {xmlstreamend, _Name}, _State,
-             #data{stream = Stream} = Data) ->
-    snatch:disconnected(?MODULE),
-    close_stream(Stream),
-    {next_state, retrying, Data, [{next_event, cast, connect}]};
-handle_event(info, {xmlstreamerror, _Error}, _State,
-             #data{stream = Stream} = Data) ->
-    snatch:disconnected(?MODULE),
-    close_stream(Stream),
-    {next_state, retrying, Data, [{next_event, cast, connect}]};
-handle_event(info, {xmlstreamelement, Packet}, _State, Data) ->
-    {keep_state, Data,[{next_event, cast, {received, Packet}}]};
 handle_event(Type, Content, State, Data) ->
     ?MODULE:State(Type, Content, Data).
 
@@ -244,9 +223,6 @@ send(Data, JID) ->
 
 send(Data, JID, ID) ->
     gen_statem:cast(?MODULE, {send, Data, JID, ID}).
-
-close_stream(Stream) ->
-    catch fxml_stream:close(Stream).
 
 timeout_action(#data{ping = false}) ->
     [];

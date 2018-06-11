@@ -4,12 +4,10 @@
     {registered, []},
     {applications, [kernel,
                     stdlib,
-                    inets,
-                    p1_utils,
-                    fast_xml]},
+                    inets]},
     {env, []},
     {mod, {snatch_app, []}},
     {maintainers, ["Thiago Camargo", "Manuel Rubio"]},
     {licenses, ["Apache License 2.1"]},
-    {links, [{"Github", "https://github.com/manuel-rubio/snatch"}]}
+    {links, [{"Github", "https://github.com/snatch-xmpp/snatch"}]}
 ]}.

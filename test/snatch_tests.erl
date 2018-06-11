@@ -2,7 +2,7 @@
 -compile([warnings_as_errors, debug_info]).
 
 -include_lib("eunit/include/eunit.hrl").
--include_lib("fast_xml/include/fxml.hrl").
+-include("snatch_xml.hrl").
 -include("snatch.hrl").
 
 -define(RECEIVE(What), (fun() ->

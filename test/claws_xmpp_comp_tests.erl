@@ -2,7 +2,7 @@
 -compile([warnings_as_errors, debug_info]).
 
 -include_lib("eunit/include/eunit.hrl").
--include_lib("fast_xml/include/fxml.hrl").
+-include("snatch_xml.hrl").
 -include("snatch.hrl").
 
 -define(AUTH, <<"<stream:stream "
@@ -32,7 +32,6 @@ connect() ->
     connect(false, false, false).
 
 connect(Trimmed, AdjustAttrs, Ping) ->
-    {ok, Apps} = application:ensure_all_started(fast_xml),
     {ok, LSocket, Port} = listen(),
     Params = #{host => {127,0,0,1},
                port => Port,
@@ -50,7 +49,7 @@ connect(Trimmed, AdjustAttrs, Ping) ->
     {ok, <<"<handshake>b09ea9b3b7f586be8a08d0a3dd7466f110aeb136</handshake>">>} = recv(),
     ok = gen_tcp:send(Socket, <<"<handshake/>">>),
     ok = timer:sleep(100),
-    {ok, Apps, LSocket, Socket}.
+    {ok, LSocket, Socket}.
 
 clean() ->
     receive
@@ -69,22 +68,14 @@ get_all(Data, Time) ->
         Time -> Data
     end.
 
-disconnect(Apps, LSocket, Socket) ->
+disconnect(LSocket, Socket) ->
     ok = gen_tcp:close(Socket),
     ok = gen_tcp:close(LSocket),
     ok = claws_xmpp_comp:disconnect(),
-    lists:foreach(fun
-        (fast_xml) ->
-            ok;
-        (App) ->
-            ok = application:stop(App),
-            ok = application:unload(App)
-    end, Apps),
     clean(),
     ok.
 
 error_connect_test() ->
-    {ok, Apps} = application:ensure_all_started(fast_xml),
     {ok, LSocket, Port} = listen(),
     Params = #{host => {127,0,0,1},
                port => Port,
@@ -97,23 +88,23 @@ error_connect_test() ->
     {ok, <<"<?xml version='1.0' ", _/binary>>} = recv(),
     ok = gen_tcp:send(Socket, ?AUTH_ERR),
     ?assertMatch([{tcp_closed, _}], get_all([])),
-    ok = disconnect(Apps, LSocket, Socket),
+    ok = disconnect(LSocket, Socket),
     ok.
 
 connect_test() ->
-    {ok, Apps, LSocket, Socket} = connect(),
-    ok = disconnect(Apps, LSocket, Socket),
+    {ok, LSocket, Socket} = connect(),
+    ok = disconnect(LSocket, Socket),
     ok.
 
 send_message_test() ->
-    {ok, Apps, LSocket, Socket} = connect(),
+    {ok, LSocket, Socket} = connect(),
     ok = claws_xmpp_comp:send(<<"<message type='chat' to='user@example.com'><body>Hi</body></message>">>, undefined),
     ?assertMatch([{tcp, _, <<"<message type='chat' ", _/binary>>}], get_all([])),
-    ok = disconnect(Apps, LSocket, Socket),
+    ok = disconnect(LSocket, Socket),
     ok.
 
 send_adjusted_attributes_message_test() ->
-    {ok, Apps, LSocket, Socket} = connect(false, true, false),
+    {ok, LSocket, Socket} = connect(false, true, false),
     ok = claws_xmpp_comp:send(<<"<message type='chat'><body>Hi</body></message>">>,
                               <<"user@example.com">>,
                               <<"msg1">>),
@@ -122,62 +113,62 @@ send_adjusted_attributes_message_test() ->
                                       "to='user@example.com' "
                                       "type='chat'>", _/binary>>}],
                  get_all([])),
-    ok = disconnect(Apps, LSocket, Socket),
+    ok = disconnect(LSocket, Socket),
     ok.
 
 received_ping_test() ->
-    {ok, Apps, LSocket, Socket} = connect(false, true, 100),
+    {ok, LSocket, Socket} = connect(false, true, 100),
     true = register(snatch, self()),
     timer:sleep(250),
     ?assertMatch([{tcp, _, <<"\n">>}|_], get_all([], 0)),
-    ok = disconnect(Apps, LSocket, Socket),
+    ok = disconnect(LSocket, Socket),
     true = unregister(snatch),
     ok.
 
 received_error_message_test() ->
-    {ok, Apps, LSocket, Socket} = connect(),
+    {ok, LSocket, Socket} = connect(),
     true = register(snatch, self()),
     ok = gen_tcp:send(Socket, <<"</message>">>),
     ?assertMatch([{'$gen_cast',{disconnected,claws_xmpp_comp}}], get_all([])),
-    ok = disconnect(Apps, LSocket, Socket),
+    ok = disconnect(LSocket, Socket),
     true = unregister(snatch),
     ok.
 
 received_stream_end_test() ->
-    {ok, Apps, LSocket, Socket} = connect(),
+    {ok, LSocket, Socket} = connect(),
     true = register(snatch, self()),
     ok = gen_tcp:send(Socket, <<"</stream:stream>">>),
     ?assertMatch([{'$gen_cast',{disconnected,claws_xmpp_comp}}], get_all([])),
-    ok = disconnect(Apps, LSocket, Socket),
+    ok = disconnect(LSocket, Socket),
     true = unregister(snatch),
     ok.
 
 received_message_test() ->
-    {ok, Apps, LSocket, Socket} = connect(),
+    {ok, LSocket, Socket} = connect(),
     true = register(snatch, self()),
     ok = gen_tcp:send(Socket, <<"<message type='chat' to='news.example.com'>
                                      <body>Hi</body>
                                  </message>">>),
     ?assertMatch([{'$gen_cast', {received, #xmlel{children = [_CData1,#xmlel{name = <<"body">>},_CData2]}, #via{}}}],
                  get_all([])),
-    ok = disconnect(Apps, LSocket, Socket),
+    ok = disconnect(LSocket, Socket),
     true = unregister(snatch),
     ok.
 
 received_message_trimmed_test() ->
-    {ok, Apps, LSocket, Socket} = connect(true, false, false),
+    {ok, LSocket, Socket} = connect(true, false, false),
     true = register(snatch, self()),
     ok = gen_tcp:send(Socket, <<"<message type='chat' to='news.example.com'>
                                      <body>Hi</body>
                                  </message>">>),
     ?assertMatch([{'$gen_cast', {received, #xmlel{children = [#xmlel{name = <<"body">>}]}, #via{}}}],
                  get_all([])),
-    ok = disconnect(Apps, LSocket, Socket),
+    ok = disconnect(LSocket, Socket),
     true = unregister(snatch),
     ok.
 
 reconnect_test() ->
-    {ok, Apps, LSocket, Socket} = connect(),
+    {ok, LSocket, Socket} = connect(),
     true = register(snatch, self()),
     ok = gen_tcp:send(Socket, <<"<message type='chat' to='news.example.com'><body>Hi</body></message>">>),
     ?assertMatch([{'$gen_cast', {received, #xmlel{}, #via{}}}], get_all([])),
@@ -189,7 +180,7 @@ reconnect_test() ->
     {ok, <<"<handshake>b09ea9b3b7f586be8a08d0a3dd7466f110aeb136</handshake>">>} = recv(),
     ok = gen_tcp:send(Socket2, <<"<handshake/>">>),
     ok = timer:sleep(100),
-    ok = disconnect(Apps, LSocket, Socket2),
+    ok = disconnect(LSocket, Socket2),
     true = unregister(snatch),
     ok.
 

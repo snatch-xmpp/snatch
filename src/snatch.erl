@@ -5,7 +5,7 @@
 
 -include("snatch.hrl").
 
--type claws() :: claws_rabbitmq | claws_xmpp | claws_xmpp_comp.
+-type claws() :: atom().
 
 -record(state, {claws :: claws(),
                 callback :: module(),
