@@ -26,14 +26,10 @@ to_bare(JID) ->
 %% @doc parse a binary to a {node, server, resource} tuple.
 parse(JID) ->
     Opts = [{capture, all, binary}],
-    case re:run(JID, "^(([^@]+)@)?([^/]+)(/(.*))?$", Opts) of
-        {match, [_, <<>>, <<>>, Server]} ->
-            {<<>>, Server, <<>>};
-        {match, [_, _, Node, Server]} ->
+    case re:run(JID, "^(?:([^@]+)@)?([^/]+)(?:/(.*))?$", Opts) of
+        {match, [_, Node, Server]} ->
             {Node, Server, <<>>};
-        {match, [_, <<>>, <<>>, Server, _, Res]} ->
-            {<<>>, Server, Res};
-        {match, [_, _, Node, Server, _, Res]} ->
+        {match, [_, Node, Server, Res]} ->
             {Node, Server, Res};
         nomatch ->
             {error, enojid}
