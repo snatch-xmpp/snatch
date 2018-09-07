@@ -17,8 +17,10 @@ is_full(JID) when is_binary(JID) ->
 -spec to_bare(binary()) -> binary().
 %% @doc converts JID to a bare JID in binary format.
 to_bare(JID) ->
-    {Node, Server, _} = parse(JID),
-    <<Node/binary, "@", Server/binary>>.
+    case parse(JID) of
+        {<<>>, Server, _} -> Server;
+        {Node, Server, _} -> <<Node/binary, "@", Server/binary>>
+    end.
 
 
 -spec parse(JID :: binary()) ->
