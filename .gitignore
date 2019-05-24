@@ -12,3 +12,4 @@ rel/example_project
 _build
 cobertura.xml
 rebar3.crashdump
+*.rdb

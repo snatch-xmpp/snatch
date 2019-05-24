@@ -12,6 +12,8 @@
     resource :: binary(),
     host :: inet:socket_address(),
     port :: inet:port_number(),
+    channel_host :: inet:socket_address(),
+    channel_port :: inet:port_number(),
     socket :: gen_udp:socket()
 }).
 
@@ -86,7 +88,7 @@ disconnect() ->
 
 disconnected(Type, connect, #data{host = Host, port = Port} = Data)
         when Type =:= cast orelse Type =:= state_timeout ->
-    case gen_udp:connect(Host, Port, [binary, {active, true}]) of
+    case gen_udp:open(0, [binary, {active, true}]) of
         {ok, NewSocket} ->
             {next_state, connected, Data#data{socket = NewSocket},
              [{next_event, cast, init_stream}]};
@@ -105,8 +107,8 @@ retrying(cast, connect, Data) ->
 connected(cast, init_stream, #data{} = Data) ->
     {next_state, stream_init, Data, [{next_event, cast, init}]}.
 
-stream_init(cast, init, #data{domain = Domain, socket = Socket} = Data) ->
-    gen_udp:send(Socket, ?INIT(Domain)),
+stream_init(cast, init, #data{domain = Domain, socket = Socket, host = Host, port = Port} = Data) ->
+    gen_udp:send(Socket, Host, Port, ?INIT(Domain)),
     {keep_state, Data, []};
 
 stream_init(cast, {received, _Packet}, Data) -> 
@@ -118,9 +120,9 @@ authenticate(cast, auth, #data{user = User, password = Password,
     {keep_state, Data, []};
 
 authenticate(cast, auth_sasl, #data{user = User, password = Password,
-                                    socket = Socket} = Data) ->
+                                    host = Host, port = Port, socket = Socket} = Data) ->
     B64 = base64:encode(<<0, User/binary, 0, Password/binary>>),
-    gen_udp:send(Socket, ?AUTH_SASL(B64)),
+    gen_udp:send(Socket, Host, Port, ?AUTH_SASL(B64)),
     {keep_state, Data, []};
 
 authenticate(cast, {received, _Packet}, Data) ->
@@ -131,17 +133,20 @@ bind(cast, bind, #data{resource = Resource, socket = Socket, domain = Domain} = 
     gen_udp:send(Socket, ?BIND(Resource)),
     {keep_state, Data, []};
 
-bind(cast, {received, _Packet}, #data{socket = Socket} = Data) ->
-    gen_udp:send(Socket, ?SESSION), 
-    gen_udp:send(Socket, ?PRESENCE),
+bind(cast, {received, _Packet}, #data{socket = Socket, host = Host, port = Port} = Data) ->
+    gen_udp:send(Socket, Host, Port, ?SESSION), 
+    gen_udp:send(Socket, Host, Port, ?PRESENCE),
     {next_state, binding, Data, []}.
 
-binding(cast, {received, _Packet}, Data) ->
+binding(cast, {received, Packet}, Data) ->
     snatch:connected(?MODULE),
-    {next_state, binded, Data, []}.
+    Elem = fxml_stream:parse_element(Packet),
+    ChannelHost = snatch_xml:get_attr(<<"ip">>, Elem),
+    ChannelPort = snatch_xml:get_attr(<<"port">>, Elem),
+    {next_state, binded, Data#data{channel_host = ChannelHost, channel_port = ChannelPort} , []}.
 
-binded(cast, {send, Packet}, #data{socket = Socket}) ->
-    gen_udp:send(Socket, Packet),
+binded(cast, {send, Packet}, #data{socket = Socket, channel_host = ChannelHost, channel_port = ChannelPort}) ->
+    gen_udp:send(Socket, ChannelHost, ChannelPort, Packet),
     {keep_state_and_data, []};
 
 binded(cast, {received, #xmlel{} = Packet}, _Data) ->
@@ -158,9 +163,9 @@ binded(cast, {received, Packet}, _Data) ->
 binded(cast, _Unknown, _Data) ->
     {keep_state_and_data, []}.
 
-handle_event(info, {udp, _Socket, Packet}, _State,
+handle_event(info, {udp, _Socket, _SrcIp, _SrcPort, Packet}, _State,
              #data{} = Data) ->
-    Elem = fxml:parse(Packet),
+    Elem = fxml_stream:parse_element(Packet),
     {keep_state, Data,[{next_event, cast, {received, Elem}}]};
 handle_event(info, {udp_error, _Socket, Reason}, _State, #data{} = Data) ->
     snatch:disconnected(?MODULE),
