@@ -26,7 +26,7 @@ The system requires OTP 19+ because we use <a href="http://erlang.org/doc/design
 In the same way we prefer to use <a href="http://www.rebar3.org">rebar3</a> instead of older versions. To install snatch only needs:
 
 <pre lang="erlang">{deps, [
-    {snatch, "0.4.2"}
+    {snatch, "0.4.6"}
 ]}</pre>
 
 Or if you are using [erlang.mk](https://erlang.mk) instead, you can use:

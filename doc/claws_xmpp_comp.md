@@ -96,7 +96,7 @@ disconnect() -&gt; ok
 ### init/1 ###
 
 <pre><code>
-init(Params::#{}) -&gt; {ok, <a href="#type-xmpp_conn_state">xmpp_conn_state()</a>, <a href="#type-state_data">state_data()</a>}
+init(Params::map()) -&gt; {ok, <a href="#type-xmpp_conn_state">xmpp_conn_state()</a>, <a href="#type-state_data">state_data()</a>}
 </code></pre>
 <br />
 
@@ -129,7 +129,7 @@ init(Params::#{}) -&gt; {ok, <a href="#type-xmpp_conn_state">xmpp_conn_state()</
 ### start_link/1 ###
 
 <pre><code>
-start_link(Params::#{}) -&gt; {ok, pid()}
+start_link(Params::map()) -&gt; {ok, pid()}
 </code></pre>
 <br />
 
@@ -138,7 +138,7 @@ start_link(Params::#{}) -&gt; {ok, pid()}
 ### start_link/2 ###
 
 <pre><code>
-start_link(Name::atom(), Params::#{}) -&gt; {ok, pid()}
+start_link(Name::atom(), Params::map()) -&gt; {ok, pid()}
 </code></pre>
 <br />
 

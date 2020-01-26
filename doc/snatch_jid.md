@@ -9,7 +9,7 @@
 ## Function Index ##
 
 
-<table width="100%" border="1" cellspacing="0" cellpadding="2" summary="function index"><tr><td valign="top"><a href="#is_full-1">is_full/1</a></td><td>returns true if the JID is a full JID, false otherwise.</td></tr><tr><td valign="top"><a href="#to_bare-1">to_bare/1</a></td><td>converts JID to a bare JID in binary format.</td></tr></table>
+<table width="100%" border="1" cellspacing="0" cellpadding="2" summary="function index"><tr><td valign="top"><a href="#is_full-1">is_full/1</a></td><td>returns true if the JID is a full JID, false otherwise.</td></tr><tr><td valign="top"><a href="#parse-1">parse/1</a></td><td>parse a binary to a {node, server, resource} tuple.</td></tr><tr><td valign="top"><a href="#to_bare-1">to_bare/1</a></td><td>converts JID to a bare JID in binary format.</td></tr></table>
 
 
 <a name="functions"></a>
@@ -26,6 +26,17 @@ is_full(JID::binary()) -&gt; boolean()
 <br />
 
 returns true if the JID is a full JID, false otherwise.
+
+<a name="parse-1"></a>
+
+### parse/1 ###
+
+<pre><code>
+parse(JID::binary()) -&gt; {binary(), binary(), binary()} | {error, enojid}
+</code></pre>
+<br />
+
+parse a binary to a {node, server, resource} tuple.
 
 <a name="to_bare-1"></a>
 

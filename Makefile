@@ -14,11 +14,8 @@ compile:
 
 test:
 	-epmd -daemon
-	./rebar3 do xref, eunit, cover
-	./covertool \
-		-cover _build/test/cover/eunit.coverdata \
-		-appname snatch \
-		-output cobertura.xml > /dev/null
+	./rebar3 do xref, eunit, cover, covertool generate
+	mv _build/test/covertool/snatch.covertool.xml cobertura.xml
 
 shell:
 	./rebar3 shell
