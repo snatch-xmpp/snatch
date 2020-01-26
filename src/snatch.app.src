@@ -9,7 +9,6 @@
                     fast_xml]},
     {env, []},
     {mod, {snatch_app, []}},
-    {maintainers, ["Thiago Camargo", "Manuel Rubio"]},
     {licenses, ["Apache License 2.1"]},
     {links, [{"Github", "https://github.com/manuel-rubio/snatch"}]}
 ]}.
